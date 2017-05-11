@@ -1,75 +1,63 @@
 <?php
 /**
- * The template for displaying all pages.
+ * Page Template
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
+ * This is the default page template.  It is used when a more specific template can't be found to display 
+ * singular views of pages.
  *
- * @link    https://codex.wordpress.org/Template_Hierarchy
- *
- * @package Newsmag
+ * @package Hatch
+ * @subpackage Template
  */
 
-get_header();
-$image = get_custom_header();
-$title = '';
+get_header(); // Loads the header.php template. ?>
 
-while ( have_posts() ) : the_post();
-	$img   = get_the_post_thumbnail_url();
-	$title = get_the_title();
-endwhile;
+	<?php do_atomic( 'before_content' ); // hatch_before_content ?>
 
-if ( empty( $img ) ) {
-	$img = get_custom_header();
-	$img = $img->url;
-}
+	<div id="content">
 
-$additional = '';
-if ( ! empty( $img ) ): ?>
-	<?php $additional = 'style="background-image:url(' . esc_url( $img ) . '"' ?>
-<?php endif; ?>
+		<?php do_atomic( 'open_content' ); // hatch_open_content ?>
 
-    <div class="newsmag-custom-header" <?php echo $additional ?>>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <h2><?php echo esc_html( $title ) ?></h2>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php
-$breadcrumbs_enabled = get_theme_mod( 'newsmag_enable_post_breadcrumbs', true );
-if ( $breadcrumbs_enabled ) { ?>
-    <div class="container newsmag-breadcrumbs-container">
-        <div class="row newsmag-breadcrumbs-row">
-            <div class="col-xs-12">
-				<?php Newsmag_Helper::add_breadcrumbs(); ?>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-    <div class="container">
-        <div id="primary" class="content-area">
-            <main id="main" class="site-main row" role="main">
+		<div class="hfeed">
 
-				<?php
-				while ( have_posts() ) : the_post();
+			<?php if ( have_posts() ) : ?>
 
-					get_template_part( 'template-parts/content', 'page' );
+				<?php while ( have_posts() ) : the_post(); ?>
 
-					// If comments are open or we have at least one comment, load up the comment template.
-					if ( comments_open() || get_comments_number() ) :
-						comments_template();
-					endif;
+					<?php do_atomic( 'before_entry' ); // hatch_before_entry ?>
 
-				endwhile; // End of the loop.
-				?>
+					<div id="post-<?php the_ID(); ?>" class="<?php hybrid_entry_class(); ?>">
 
-            </main><!-- #main -->
-        </div><!-- #primary -->
-    </div>
-<?php
-get_footer();
+						<?php do_atomic( 'open_entry' ); // hatch_open_entry ?>
+
+						<h1 class="post-title entry-title"><?php the_title(); ?></h2>
+
+						<div class="entry-content">
+							<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'hatch' ) ); ?>
+							<?php wp_link_pages( array( 'before' => '<p class="page-links">' . __( 'Pages:', 'hatch' ), 'after' => '</p>' ) ); ?>
+						</div><!-- .entry-content -->
+
+						<div class="entry-meta"><?php edit_post_link(); ?></div>
+
+						<?php do_atomic( 'close_entry' ); // hatch_close_entry ?>
+
+					</div><!-- .hentry -->
+
+					<?php do_atomic( 'after_entry' ); // hatch_after_entry ?>
+
+					<?php do_atomic( 'after_singular' ); // hatch_after_singular ?>
+					
+					<?php comments_template( '/comments.php', true ); // Loads the comments.php template. ?>
+
+				<?php endwhile; ?>
+
+			<?php endif; ?>
+
+		</div><!-- .hfeed -->
+
+		<?php do_atomic( 'close_content' ); // hatch_close_content ?>
+
+	</div><!-- #content -->
+
+	<?php do_atomic( 'after_content' ); // hatch_after_content ?>
+
+<?php get_footer(); // Loads the footer.php template. ?>

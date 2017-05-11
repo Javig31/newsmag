@@ -1,83 +1,63 @@
 <?php
 /**
- * The template for displaying comments.
+ * Comments Template
  *
- * This is the template that displays the area of the page that contains both the current comments
- * and the comment form.
+ * Lists comments and calls the comment form.  Individual comments have their own templates.  The 
+ * hierarchy for these templates is $comment_type.php, comment.php.
  *
- * @link    https://codex.wordpress.org/Template_Hierarchy
- *
- * @package Newsmag
+ * @package Hatch
+ * @subpackage Template
  */
 
-/*
- * If the current post is protected by a password and
- * the visitor has not yet entered the password we will
- * return early without loading the comments.
- */
-if ( post_password_required() ) {
+/* If a post password is required or no comments are given and comments/pings are closed, return. */
+if ( post_password_required() || ( !have_comments() && !comments_open() && !pings_open() ) )
 	return;
-}
 ?>
 
-<div id="comments" class="comments-area">
-	<?php
-	// You can start editing here -- including this comment!
-	if ( have_comments() ) : ?>
-		<h3 class="comments-title">
-			<span>
-				<?php echo __( 'Comments', 'newsmag' ) ?>
-			</span>
-		</h3>
+<div id="comments-template">
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-			<nav id="comment-nav-above" class="navigation comment-navigation" role="navigation">
-				<h2 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'newsmag' ); ?></h2>
-				<div class="nav-links">
+	<div class="comments-wrap">
 
-					<div
-						class="nav-previous"><?php previous_comments_link( esc_html__( 'Older Comments', 'newsmag' ) ); ?></div>
-					<div class="nav-next"><?php next_comments_link( esc_html__( 'Newer Comments', 'newsmag' ) ); ?></div>
+		<div id="comments">
 
-				</div><!-- .nav-links -->
-			</nav><!-- #comment-nav-above -->
-		<?php endif; // Check for comment navigation. ?>
+			<?php if ( have_comments() ) : ?>
 
-		<ol class="comment-list">
-			<?php
-			wp_list_comments( array(
-				                  'style'       => 'ol',
-				                  'short_ping'  => true,
-				                  'avatar_size' => 64,
-			                  ) );
-			?>
-		</ol><!-- .comment-list -->
+				<h3 id="comments-number" class="comments-header block-title"><span><?php comments_number( __( 'No Responses', 'hatch' ), __( 'One Response', 'hatch' ), __( '% Responses', 'hatch' ) ); ?></span></h3>
 
-		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : // Are there comments to navigate through? ?>
-			<nav id="comment-nav-below" class="navigation comment-navigation" role="navigation">
-				<h2 class="screen-reader-text"><?php esc_html_e( 'Comment navigation', 'newsmag' ); ?></h2>
-				<div class="nav-links">
+				<?php do_atomic( 'before_comment_list' );// hatch_before_comment_list ?>
 
-					<div
-						class="nav-previous"><?php previous_comments_link( esc_html__( 'Older Comments', 'newsmag' ) ); ?></div>
-					<div class="nav-next"><?php next_comments_link( esc_html__( 'Newer Comments', 'newsmag' ) ); ?></div>
+				<ol class="comment-list">
+					<?php wp_list_comments( hybrid_list_comments_args() ); ?>
+				</ol><!-- .comment-list -->
 
-				</div><!-- .nav-links -->
-			</nav><!-- #comment-nav-below -->
-			<?php
-		endif; // Check for comment navigation.
+				<?php do_atomic( 'after_comment_list' ); // hatch_after_comment_list ?>
 
-	endif; // Check for have_comments().
+				<?php if ( get_option( 'page_comments' ) ) : ?>
+					<div class="comment-navigation comment-pagination">
+						<?php paginate_comments_links(); ?>
+					</div><!-- .comment-navigation -->
+				<?php endif; ?>
 
+			<?php endif; ?>
 
-	// If comments are closed and there are comments, let's leave a little note, shall we?
-	if ( ! comments_open() && get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) : ?>
+			<?php if ( pings_open() && !comments_open() ) : ?>
 
-		<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'newsmag' ); ?></p>
-		<?php
-	endif;
+				<p class="comments-closed pings-open">
+					<?php printf( __( 'Comments are closed, but <a href="%1$s" title="Trackback URL for this post">trackbacks</a> and pingbacks are open.', 'hatch' ), get_trackback_url() ); ?>
+				</p><!-- .comments-closed .pings-open -->
 
-	comment_form();
-	?>
+			<?php elseif ( !comments_open() ) : ?>
 
-</div><!-- #comments -->
+				<p class="comments-closed">
+					<?php _e( 'Comments are closed.', 'hatch' ); ?>
+				</p><!-- .comments-closed -->
+
+			<?php endif; ?>
+
+		</div><!-- #comments -->
+
+		<?php comment_form(); // Loads the comment form. ?>
+
+	</div><!-- .comments-wrap -->
+
+</div><!-- #comments-template -->

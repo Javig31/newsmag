@@ -1,34 +1,49 @@
 <?php
 /**
- * The template for displaying 404 pages (not found).
+ * 404 Template
  *
- * @link    https://codex.wordpress.org/Creating_an_Error_404_Page
+ * The 404 template is used when a reader visits an invalid URL on your site. By default, the template will 
+ * display a generic message.
  *
- * @package Newsmag
+ * @package Hatch
+ * @subpackage Template
+ * @link http://codex.wordpress.org/Creating_an_Error_404_Page
  */
 
-get_header(); ?>
-<div class="container">
-	<div class="row">
-		<div id="primary" class="content-area">
-			<main id="main" class="site-main" role="main">
+@header( 'HTTP/1.1 404 Not found', true, 404 );
 
-				<section class="error-404 not-found">
-					<header class="page-header">
-						<h1><?php _e( 'Oops! That page can&rsquo;t be found.', 'newsmag' ); ?></h1>
-					</header><!-- .page-header -->
+get_header(); // Loads the header.php template. ?>
 
-					<div class="page-content">
-						<p><?php _e( 'It looks like nothing was found at this location. Maybe try a better search?', 'newsmag' ); ?></p>
+	<?php do_atomic( 'before_content' ); // hatch_before_content ?>
 
-						<?php get_search_form(); ?>
+	<div id="content">
 
-					</div><!-- .page-content -->
-				</section><!-- .error-404 -->
+		<?php do_atomic( 'open_content' ); // hatch_open_content ?>
 
-			</main><!-- #main -->
-		</div><!-- #primary -->
-	</div><!--/.row-->
-</div><!--/.container-->
-<?php get_footer(); ?>
+		<div class="hfeed">
 
+			<div id="post-0" class="<?php hybrid_entry_class(); ?>">
+
+				<h1 class="error-404-title entry-title"><?php _e( 'Not Found', 'hatch' ); ?></h1>
+
+				<div class="entry-content">
+
+					<p>
+					<?php printf( __( 'You tried going to %1$s, and it doesn\'t exist. All is not lost! You can search for what you\'re looking for.', 'hatch' ), '<code>' . home_url( esc_url( $_SERVER['REQUEST_URI'] ) ) . '</code>' ); ?>
+					</p>
+
+					<?php get_search_form(); // Loads the searchform.php template. ?>
+
+				</div><!-- .entry-content -->
+
+			</div><!-- .hentry -->
+
+		</div><!-- .hfeed -->
+
+		<?php do_atomic( 'close_content' ); // hatch_close_content ?>
+
+	</div><!-- #content -->
+
+	<?php do_atomic( 'after_content' ); // hatch_after_content ?>
+
+<?php get_footer(); // Loads the footer.php template. ?>

@@ -1,71 +1,55 @@
 <?php
 /**
- * The template for displaying the footer.
+ * Footer Template
  *
- * Contains the closing of the #content div and all content after.
+ * The footer template is generally used on every page of your site. Nearly all other
+ * templates call it somewhere near the bottom of the file. It is used mostly as a closing
+ * wrapper, which is opened with the header.php file. It also executes key functions needed
+ * by the theme, child themes, and plugins. 
  *
- * @link    https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package Newsmag
+ * @package Hatch
+ * @subpackage Template
  */
-
 ?>
-</div><!-- #content -->
+				<?php get_sidebar( 'primary' ); // Loads the sidebar-primary.php template. ?>
 
-<footer id="colophon" class="site-footer" role="contentinfo">
-	<?php get_sidebar( 'footer' ) ?>
+				<?php do_atomic( 'close_main' ); // hatch_close_main ?>
 
-	<?php
-	if ( get_theme_mod( 'newsmag_after_footer_enable', false ) ) {
-		get_template_part( 'template-parts/after-footer' );
-	}
-	?>
+		</div><!-- #main -->
 
-	<?php $go_top_enabled = get_theme_mod( 'newsmag_enable_go_top', true ); ?>
+		<?php do_atomic( 'after_main' ); // hatch_after_main ?>
 
-	<?php if ( $go_top_enabled ): ?>
-		<a href="#0" id="back-to-top" class="back-to-top">
-			<span class="nmicon-angle-up"></span>
-		</a>
-	<?php endif; ?>
+		<?php get_sidebar( 'subsidiary' ); // Loads the sidebar-subsidiary.php template. ?>		
 
-	<?php
-	$copyright_area = get_theme_mod( 'newsmag_enable_copyright', true );
-	$copyright_menu = has_nav_menu( 'copyright' );
-	?>
-	<div class="site-info">
-		<div class="container">
-			<div class="row">
-				<div class="<?php echo $copyright_menu ? 'col-lg-7 col-sm-8' : 'col-sm-12'; ?>">
-					<?php if ( $copyright_area ): ?>
-						<?php
-						echo wp_kses_post( get_theme_mod( 'newsmag_copyright_contents', '&copy; ' . date( "Y" ) . ' <a href="https://www.machothemes.com/newsmag-lite/">Newsmag</a>. All rights reserved.' ) );
-						?>
-					<?php endif; ?>
+		<?php do_atomic( 'before_footer' ); // hatch_before_footer ?>
 
-					<?php echo __( 'Created by <a href="https://www.machothemes.com" rel="dofollow" title="Professional WordPress Themes">Macho Themes</a>', 'newsmag' ) ?>
-				</div>
+		<div id="footer">
 
-				<?php
-				if ( has_nav_menu( 'copyright' ) ) {
-					?>
-					<div class="col-lg-5 col-sm-4 text-right">
-						<?php
-						wp_nav_menu( array(
-							             'theme_location' => 'copyright',
-							             'menu_id'        => 'copyright-menu',
-							             'items_wrap'     => '<ul id="%1$s" class="copyright-menu %2$s">%3$s</ul>'
-						             ) );
-						?>
-					</div>
-				<?php } ?>
+			<?php do_atomic( 'open_footer' ); // hatch_open_footer ?>
+
+			<div class="footer-content">
+			
+                
+                <p class="copyright">Copyright &#169; <?php echo date('Y'); ?> <a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
+				<p class="credit">Powered by <a href="http://wordpress.org">WordPress</a> and <a href="http://alienwp.com">Hatch</a></p>
+
+				<?php do_atomic( 'footer' ); // hatch_footer ?>
+
 			</div>
-		</div>
-	</div>
-</footer><!-- #colophon -->
-</div><!-- #page -->
 
-<?php wp_footer(); ?>
+			<?php do_atomic( 'close_footer' ); // hatch_close_footer ?>
+
+		</div><!-- #footer -->
+
+		<?php do_atomic( 'after_footer' ); // hatch_after_footer ?>
+		
+		</div><!-- .wrap -->
+
+	</div><!-- #container -->
+
+	<?php do_atomic( 'close_body' ); // hatch_close_body ?>
+	
+	<?php wp_footer(); // wp_footer ?>
 
 </body>
 </html>
